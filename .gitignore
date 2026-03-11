@@ -1,0 +1,73 @@
+
+# ===== OS / Editor =====
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ===== Python =====
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+backend/.venv/
+backend/venv/
+.venv/
+venv/
+# env files
+.env
+.env.*
+!.env.example
+
+# ===== Node =====
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+dist/
+build/
+
+# ===== Secrets / Keys =====
+*.pem
+*.key
+*.p12
+*service-account*.json
+*sa*.json
+secrets/
+**/secrets/
+
+# （注意）"C:/secrets/" はリポジトリ相対ではないため無効。必要ならグローバル .gitignore で管理推奨。
+
+# ===== Logs =====
+logs/
+*.log
+
+# ===== Misc =====
+*.zip
+*.tar.gz
+
+# ===== Extension build artifacts / packages =====
+extension.crx
+extension/*.crx
+extension/key.pem
+extension/*.pem
+extension/config.runtime.js
+extension/widget/assets/
+extension/widget/index.html
+extension/widget/config.js
+
+# local debug / artifacts
+ops/
+
+# ===== Cloud Run env restore artifacts (DO NOT COMMIT) =====
+env.*.yaml
+run-env.yaml
+env.restore.json
+env.restore.yaml
+syn.*.txt
+synonyms.json
+
+# Cloud Run env export (must not be committed)
+env.from-*.yaml
+syn.raw.txt
+syn.current.txt

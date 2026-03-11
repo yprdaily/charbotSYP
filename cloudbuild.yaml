@@ -1,0 +1,76 @@
+substitutions:
+  _REGION: "asia-northeast1"
+  _SERVICE: "your-service-name"
+  _REPO: "your-repo-name"
+  _ALLOW_UNAUTH: "true"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  substitutionOption: ALLOW_LOOSE
+
+timeout: "1200s"
+
+steps:
+  # 0) Print info
+  - name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: "bash"
+    args:
+      - -lc
+      - |
+        set -euo pipefail
+        IMG_URI="${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_SERVICE}:${COMMIT_SHA}"
+        echo "PROJECT_ID=${PROJECT_ID}"
+        echo "REGION=${_REGION}"
+        echo "SERVICE=${_SERVICE}"
+        echo "REPO=${_REPO}"
+        echo "COMMIT_SHA=${COMMIT_SHA}"
+        echo "IMG_URI=$$IMG_URI"
+
+  # 1) Build (backend を context にする)
+  - name: "gcr.io/cloud-builders/docker"
+    dir: "backend"
+    args:
+      [
+        "build",
+        "--no-cache",
+        "-f",
+        "Dockerfile",
+        "-t",
+        "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_SERVICE}:${COMMIT_SHA}",
+        "."
+      ]
+
+  # 2) Push
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "push",
+        "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_SERVICE}:${COMMIT_SHA}"
+      ]
+
+  # 3) Deploy
+  - name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: "bash"
+    args:
+      - -lc
+      - |
+        set -euo pipefail
+        IMG_URI="${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_SERVICE}:${COMMIT_SHA}"
+        echo "Deploying ${_SERVICE} -> $$IMG_URI"
+
+        if [ "${_ALLOW_UNAUTH}" = "true" ]; then
+          gcloud run deploy "${_SERVICE}" \
+            --image "$$IMG_URI" \
+            --region "${_REGION}" \
+            --allow-unauthenticated \
+            --quiet
+        else
+          gcloud run deploy "${_SERVICE}" \
+            --image "$$IMG_URI" \
+            --region "${_REGION}" \
+            --no-allow-unauthenticated \
+            --quiet
+        fi
+
+images:
+  - "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_SERVICE}:${COMMIT_SHA}"

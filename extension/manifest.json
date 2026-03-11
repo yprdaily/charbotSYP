@@ -1,0 +1,63 @@
+{
+  "manifest_version": 3,
+  "name": "CorpBot Widget",
+  "version": "1.0.1",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjS3sg4mRwR89cSrUk7fH8IYX53pDLjGl8bqNxYhRUsXj4yicD+v8SkLqakQzC8661wzuP840DUPyL8OLRRnEmI47UeL3aocfAO9RBjfNZSSnF30KwgScYdGCfZEyD5Vwr88gZZD4b4M7AXhOMjFjFufn6u9VtjjRgTSsXv2JBr2ApN2CPjHsRD2Atrs+gsFa1/6QLD1grwNhifSFarRC//nycRhganWOqQG+yvRUIQi7Twv7Q0H/lB6jvQxy7Q7W0ws6S2z06usy4fTZW+hh4dSzN6+4fE9Hq8l00lIP542VqAjLpi1G7AL7ul47BA6Cb8Jq9RCBLMAn+YfPg0D1VQIDAQAB",
+  "description": "Gmail / Desknet's Neo 上で利用できる社内QAチャットボット",
+  "permissions": [
+    "storage",
+    "identity"
+  ],
+  "oauth2": {
+    "client_id": "YOUR_OAUTH_CLIENT_ID.apps.googleusercontent.com",
+    "scopes": [
+      "openid",
+      "email",
+      "profile"
+    ]
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "icons": {
+    "128": "icons/logo.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://mail.google.com/*",
+        "https://your-company-domain.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "host_permissions": [
+    "https://accounts.google.com/*",
+    "https://mail.google.com/*",
+    "https://your-company-domain.com/*",
+    "https://your-cloud-run-url.a.run.app/*",
+    "http://127.0.0.1:8000/*",
+    "http://localhost:8000/*"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "widget/*",
+        "config.js",
+        "icons/logo.png",
+        "icons/ui-logo.png"
+      ],
+      "matches": [
+        "https://mail.google.com/*",
+        "https://your-company-domain.com/*"
+      ]
+    }
+  ]
+}
